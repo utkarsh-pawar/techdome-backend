@@ -10,7 +10,13 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost3000" }));
+app.use(
+  cors({
+    origin: "http://localhost3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: "Content-Type, Authorization",
+  })
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
