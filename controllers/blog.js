@@ -20,10 +20,10 @@ export const create = async (req, res) => {
 export const updateBlog = async (req, res) => {
   const { title, content } = req.body;
   const result = await v2.uploader.upload(req.file.path);
-  Blog.findByIdAndUpdate(
-    { _id: req?.body?.blogid },
+  const updated = await Blog.findByIdAndUpdate(
+    req.body.blogId,
     { title, content, img: result.url },
-    { new: true, upsert: true }
+    { new: true }
   );
   res.status(200).json("Updated successfully");
 };
@@ -35,12 +35,20 @@ export const deleteBlog = async (req, res) => {
 };
 
 export const getMyBlogs = async (req, res) => {
-  const { _id } = req.profile;
-  const blogs = await Blog.paginate({ userID: _id }, { sort: "createdAt" });
-  res.status(200).json(blogs);
+  try {
+    const { _id } = req.profile;
+    const blogs = await Blog.paginate({ userID: _id }, { sort: "createdAt" });
+    res.status(200).json(blogs);
+  } catch (error) {
+    res.status(400).json("something went wrong");
+  }
 };
 export const getBlogDetail = async (req, res) => {
   const { id } = req.params;
   const detail = await Blog.findById(id);
   res.status(200).json(detail);
+};
+export const getAllBlogs = async (req, res) => {
+  const blogs = await Blog.find();
+  res.status(200).json(blogs);
 };
